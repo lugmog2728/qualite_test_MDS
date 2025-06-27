@@ -85,3 +85,21 @@ jobs:
         with:
           name: couverture
           path: Exercice_4/coverage/
+
+  rollback:
+    name: 🛑 Rollback (en cas d’échec)
+    runs-on: ubuntu-latest
+    if: failure()
+    needs: [test, coverage_and_check]
+    steps:
+      - name: 🔁 Rollback automatique ou alerte
+        run: |
+          echo "❌ Échec détecté dans un job précédent."
+          echo "⏪ Déclenchement d'une action de rollback..."
+
+          # Exemple de rollback : suppression de fichiers, alerte, reset d'une branche...
+          # echo "Rollback en cours..."
+          # curl -X POST https://mon-vps/rollback-endpoint
+
+          echo "🚨 Pense à implémenter ton rollback réel ici"
+
