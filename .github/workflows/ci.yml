@@ -73,19 +73,7 @@ jobs:
           else
             echo "✅ Couverture suffisante"
           fi
-
-  upload:
-    name: 📁 Sauvegarder le rapport de couverture
-    runs-on: ubuntu-latest
-    needs: coverage_and_check
-    steps:
-      - uses: actions/checkout@v4
-      - name: 📁 Upload coverage/
-        uses: actions/upload-artifact@v4
-        with:
-          name: couverture
-          path: Exercice_4/coverage/
-
+          
   rollback:
     name: 🛑 Rollback (en cas d’échec)
     runs-on: ubuntu-latest
