@@ -2,9 +2,9 @@ name: CI - Exercice_4
 
 on:
   push:
-    branches: [ deploy ]
+    branches: [ main ]
   pull_request:
-    branches: [ deploy ]
+    branches: [ main ]
 
 jobs:
   test:
@@ -12,14 +12,14 @@ jobs:
 
     steps:
       - name: 📥 Cloner le dépôt
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: 🟢 Installer Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: 18
 
-      - name: 📦 Installer les dépendances de Exercice_4
+      - name: 📦 Installer les dépendances
         working-directory: ./Exercice_4
         run: npm install
 
@@ -44,7 +44,7 @@ jobs:
           fi
 
       - name: 📁 Sauvegarder le rapport de couverture
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: couverture
           path: Exercice_4/coverage/
