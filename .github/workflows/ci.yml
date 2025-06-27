@@ -1,0 +1,93 @@
+name: CI - Exercice_4
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+
+  install:
+    name: 📦 Installer les dépendances
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Cloner le dépôt
+        uses: actions/checkout@v4
+
+      - name: 🟢 Installer Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: 📦 Installation dans Exercice_4
+        working-directory: ./Exercice_4
+        run: npm install
+
+  test:
+    name: 🧪 Lancer les tests
+    runs-on: ubuntu-latest
+    needs: install
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+      - name: 📦 Installer les dépendances
+        working-directory: ./Exercice_4
+        run: npm install
+      - name: 🧪 Tests unitaires/fonctionnels/E2E
+        working-directory: ./Exercice_4
+        run: npm run test:all
+
+  coverage_and_check:
+    name: 📊 Générer et vérifier la couverture
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+      - name: 📦 Installer les dépendances
+        working-directory: ./Exercice_4
+        run: npm install
+      - name: 📊 Lancer la couverture + vérification
+        working-directory: ./Exercice_4
+        run: |
+          echo "📊 Exécution de Jest avec --coverage"
+          npm run test:couverture
+
+          echo "🔎 Vérification de coverage-summary.json"
+          if [ ! -f coverage/coverage-summary.json ]; then
+            echo "❌ Le fichier coverage-summary.json est introuvable"
+            exit 1
+          fi
+
+          COVERAGE=$(node -e "console.log(require('./coverage/coverage-summary.json').total.lines.pct)")
+          echo "📈 Couverture actuelle : $COVERAGE %"
+
+          if (( $(echo "$COVERAGE < 80" | bc -l) )); then
+            echo "❌ Couverture insuffisante (< 80%)"
+            exit 1
+          else
+            echo "✅ Couverture suffisante"
+          fi
+          
+  rollback:
+    name: 🛑 Rollback (en cas d’échec)
+    runs-on: ubuntu-latest
+    if: failure()
+    needs: [test, coverage_and_check]
+    steps:
+      - name: 🔁 Rollback automatique ou alerte
+        run: |
+          echo "❌ Échec détecté dans un job précédent."
+          echo "⏪ Déclenchement d'une action de rollback..."
+
+          # Exemple de rollback : suppression de fichiers, alerte, reset d'une branche...
+          # echo "Rollback en cours..."
+          # curl -X POST https://mon-vps/rollback-endpoint
+
+          echo "🚨 Pense à implémenter ton rollback réel ici"
+
