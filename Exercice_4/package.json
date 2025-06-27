@@ -4,7 +4,7 @@
   "main": "src/app.js",
   "scripts": {
     "start": "node src/app.js",
-    "test:couverture": "jest --coverage",
+    "test:couverture": "jest --coverage --coverageReporters=json-summary",
     "test:unitaire" :  "jest tests/unit",
     "test:fonctionnel" : "jest tests/fonctionnel",
     "test:E2E":  "jest tests/E2E",
