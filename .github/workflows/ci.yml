@@ -1,0 +1,50 @@
+name: CI - Exercice_4
+
+on:
+  push:
+    branches: [ deploy ]
+  pull_request:
+    branches: [ deploy ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Cloner le dépôt
+        uses: actions/checkout@v3
+
+      - name: 🟢 Installer Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: 📦 Installer les dépendances de Exercice_4
+        working-directory: ./Exercice_4
+        run: npm install
+
+      - name: 🧪 Lancer tous les tests
+        working-directory: ./Exercice_4
+        run: npm run test:all
+
+      - name: 📊 Générer la couverture de test
+        working-directory: ./Exercice_4
+        run: npm run test:couverture
+
+      - name: ✅ Vérifier que la couverture ≥ 80 %
+        working-directory: ./Exercice_4
+        run: |
+          COVERAGE=$(node -e "console.log(require('./coverage/coverage-summary.json').total.lines.pct)")
+          echo "Couverture actuelle : $COVERAGE %"
+          if (( $(echo "$COVERAGE < 80" | bc -l) )); then
+            echo "❌ Échec : couverture < 80 %"
+            exit 1
+          else
+            echo "✅ Couverture suffisante"
+          fi
+
+      - name: 📁 Sauvegarder le rapport de couverture
+        uses: actions/upload-artifact@v3
+        with:
+          name: couverture
+          path: Exercice_4/coverage/
